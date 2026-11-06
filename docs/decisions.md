@@ -1,0 +1,135 @@
+# Plaatsbeschrijving.be decision log
+
+Product owner: Sam. Started 6 November 2026.
+Every decision here is binding for implementation. Changing one needs a new entry, never a silent code change.
+Format: decision, why, consequences. Open questions at the bottom, each with a proposed default that is NOT binding until Sam decides.
+
+---
+
+## D-00 Product positioning
+
+**Decision:** The app records what landlord and tenant saw, agreed and signed, and when. The AI proposes; people check and sign. The app does not judge who is right in a deposit dispute and does not replace a legal expert.
+
+**Why:** We can stand behind "these photos were taken in the app at this time, both parties signed this list". We cannot stand behind "this damage was caused by the tenant".
+
+**Consequences:**
+- No UI text, email, PDF or variable name claims the inventory is "certified", "legally guaranteed", "expert" or "official", until the legal check (O-01) says what we may claim.
+- AI output is always labelled as a proposal until a person confirms it.
+- The move-out comparison shows differences. It never says who is liable or what it costs.
+
+## D-01 MVP scope
+
+**Decision:** Flanders only, Dutch UI. Primary user: private landlord with 1 to 5 homes, plus the tenant.
+
+**Consequences:**
+- All UI strings in `messages/nl.json`. Code, comments, docs and commit messages in English.
+- Brussels, Wallonia, French UI, agencies and student housing are post-MVP.
+
+## D-02 Roles and accounts
+
+**Decision:** Both landlord and tenant have an account and sign in. The landlord creates the home and the inventory and invites the tenant by email.
+
+**Consequences:**
+- An inventory has exactly two parties in the MVP: one landlord account, one tenant account. Co-tenants and co-owners are post-MVP (O-04).
+- Neither party depends on the other's photos: both see every photo with its capture time.
+
+## D-03 Main flow
+
+**Decision:**
+1. Set up the home: address, rooms, meters. Invite the tenant.
+2. Photograph each room: one wide photo per wall plus floor and ceiling.
+3. AI lists the items and their visible condition. Tenant belongings are left out.
+4. AI flags what it cannot judge and asks for a close-up. Meter readings and keys are read from a photo.
+5. Both parties review, add remarks and sign in the app.
+6. PDF export for attaching to the lease and registration.
+7. Move-out: the app guides the same photos room by room and shows per item what changed. Both sign the exit inventory.
+
+## D-04 Photos are camera-only (Sam, 6 Nov 2026)
+
+**Decision:** Every inventory photo is taken live in the app. No gallery upload.
+
+**Why:** The capture time is then known, and an older photo cannot be passed off as current. Same principle as the WFSR handover capture.
+
+**Consequences:**
+- Capture uses the in-browser camera (`getUserMedia`), not a file input with `accept=image/*`.
+- Each photo gets a server receive time and a content hash, both recorded in the ledger.
+- The PDF shows the capture time with every photo.
+
+## D-05 AI role
+
+**Decision:** Claude (Anthropic API) reads photos, proposes items per room with a condition from a fixed scale, flags uncertainty, and reads meters and keys. Called only from Edge Functions or server code.
+
+**Consequences:**
+- Every AI field carries `source = ai` until a person confirms or edits it; confirmation is a ledger event.
+- Uncertain items get a close-up request, never a guessed condition.
+- The condition scale is fixed and short (O-03), so landlord, tenant and AI use the same words.
+- The AI never sees account names, email addresses or the address of the home.
+
+## D-06 Tamper-evident history
+
+**Decision:** Same technique as WFSR: an append-only, hash-chained ledger per inventory, and a nightly signed checkpoint made by a job outside Supabase.
+
+**Consequences:**
+- `ledger_events` cannot be updated, deleted or truncated (triggers plus grants). Corrections are new events.
+- The fingerprint formula (`ledger_hash`) is frozen once the first migration is applied. A change needs a new hash version and a decision entry.
+- No personal data in ledger payloads: internal UUIDs, item facts, photo hashes, and hashes of user-written text only. Text lives in a separate erasable table.
+- The checkpoint job has its own key; only its sha256 is stored in the database. Own key, own repository for proofs, nothing shared with WFSR.
+
+## D-07 Signing in the app (Sam, 6 Nov 2026)
+
+**Decision:** MVP uses our own in-app signature: signed-in account, recent re-authentication, typed full name plus drawn signature, and a ledger event with the hash of the final PDF. Signing sits behind one interface so an external provider (DocuSign, a Belgian provider, itsme) can be added later as a paid option without changing the flow.
+
+**Why:** A Flemish inventory does not need a qualified signature. External providers cost per signature (twice per inventory, twice per lease) and send the photos to a third party.
+
+**Consequences:**
+- Signing happens on a frozen version. After the first signature nothing changes; a correction creates a new version and both sign again.
+- The PDF contains the signature, name, time and the version hash, plus a short line explaining how to check it.
+- Provider choice is a separate future decision.
+
+## D-08 Two-step login (Sam, 6 Nov 2026)
+
+**Decision:** TOTP two-step login, optional for both landlord and tenant. Signing always needs a recent sign-in, with or without two-step.
+
+## D-09 Payment comes last
+
+**Decision:** Pay per inventory, built last. Price hypothesis from the one-pager (€29 move-in, €19 move-out, €39 bundle) is untested.
+
+**Consequences:**
+- The data model has a place for payment status from the start, but no payment code until the payment task.
+- Provider (Stripe or Mollie) and the moment of payment are open (O-05, O-06).
+
+## D-10 Separate from WFSR
+
+**Decision:** Own repository (`Gladharim14/plaatsbeschrijving`), own Supabase project (`plaatsbeschrijving`, ref `tmjmwkxpwqpxiqhnqmxy`, eu-central-1), own keys, own Vercel project, own email domain. Nothing shared with WFSR.
+
+**Consequences:**
+- WFSR code and patterns are copied and adapted, never imported or linked.
+- No WFSR account, key, bucket, table or secret may be referenced.
+
+## D-11 Own visual identity (Sam, 6 Nov 2026)
+
+**Decision:** A new identity: calm, trustworthy, practical. Nothing that reads as WFSR (no green and gold, no Cinzel).
+
+## D-12 Privacy from day one
+
+**Decision:** Photos of a home are personal data. Private storage, EXIF stripped on every derivative, short-lived signed URLs, access only for the two parties of that inventory.
+
+**Consequences:**
+- Tenant belongings may appear in photos; they are excluded from the item list but the photo stays as taken.
+- Retention period and deletion rules are open (O-02). Until decided, nothing is deleted automatically.
+- Data processing terms with Anthropic, Supabase, Vercel and Resend are checked before the pilot.
+
+---
+
+## Open questions (proposed defaults, not binding)
+
+| Id | Question | Proposed default |
+|---|---|---|
+| O-01 | Which format and fields does a Flemish inventory need to be registrable, and what may we claim about validity? | Check with a lawyer or rental expert before the pilot; PDF follows the common Flemish model until then |
+| O-02 | How long do we keep photos and inventories after the lease ends? | Until the deposit is settled plus the legal limitation period; landlord can export and delete |
+| O-03 | Which condition scale? | Nieuw, Goed, Gebruikt, Beschadigd, Defect, plus "niet te beoordelen" |
+| O-04 | Can the tenant add items, photos and close-ups, or only remarks? | Tenant can add remarks and close-ups (camera only), not delete or edit landlord items |
+| O-05 | Payment provider? | Mollie (Belgian payment methods, Bancontact) |
+| O-06 | When does the landlord pay? | Before the PDF can be signed; the AI room list is free to try |
+| O-07 | What if the parties disagree on an item? | Each keeps a remark on the item; both can still sign with remarks |
+| O-08 | Final name and company (own or under WFSR's company)? | Plaatsbeschrijving.be as working name |
