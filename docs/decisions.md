@@ -127,7 +127,7 @@ Format: decision, why, consequences. Open questions at the bottom, each with a p
 - The tenant is identified by email address and code; the code check is a ledger event.
 - Supersedes the tenant part of D-02. The landlord part of D-02 stands.
 
-## D-14 72-hour review window (Sam, 7 Nov 2026)
+## D-14 72-hour review window (Sam, 7 Nov 2026; signing alone withdrawn by D-22)
 
 **Decision:** The landlord shares the finished report with the tenant for a 72-hour review. Without a reaction, the tenant gets an automatic reminder and 72 more hours. After that, the landlord may sign alone; the PDF then states "not reviewed by the tenant".
 
@@ -138,7 +138,7 @@ Format: decision, why, consequences. Open questions at the bottom, each with a p
 **Consequences:**
 - An accepted comment changes the item (or adds one) and is shown in the PDF as agreed.
 - A rejected comment can be withdrawn by the tenant or reopened by the landlord; while it stands, nobody signs.
-- Known risk: an inventory can stay unsigned. D-14's "sign alone" applies only when the tenant did not react at all, never over a rejected comment.
+- Known risk: an inventory can stay unsigned. D-22 sets what the app offers then.
 
 ## D-16 Three languages, all of Belgium (Sam, 7 Nov 2026)
 
@@ -168,6 +168,17 @@ Format: decision, why, consequences. Open questions at the bottom, each with a p
 ## D-21 Report by email (Sam, 7 Nov 2026)
 
 **Decision:** When the report is signed, the PDF is emailed to landlord and tenant. Both can download it again from the app or the email link.
+
+## D-22 No inventory without consensus (Sam, 7 Nov 2026)
+
+**Decision:** An inventory exists only when both parties signed the same version. Nobody signs alone, ever. Withdraws the "landlord may sign alone" part of D-14; the review window and reminders stay.
+
+**Why:** A plaatsbeschrijving is by definition a joint record; that is why it is made. A record signed by one party is that party's version, the same weakness as today's templates.
+
+**Consequences:**
+- The app's job is to make agreement easy: clear photos with times, close-ups, comments with photos, accept or reject, new versions, reminders.
+- When agreement fails (a rejected comment that stands, or no reaction from the tenant), the landlord or the tenant can download a "not agreed" file: the latest version, every comment with both positions, all photos with times, clearly marked as unsigned and not an inventory. It is meant for the legal route (expert appointed through the justice of the peace, to confirm in O-01).
+- No "signed by landlord only" state, flag or PDF text anywhere.
 
 ---
 
