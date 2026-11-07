@@ -17,7 +17,7 @@ Format: decision, why, consequences. Open questions at the bottom, each with a p
 - AI output is always labelled as a proposal until a person confirms it.
 - The move-out comparison shows differences. It never says who is liable or what it costs.
 
-## D-01 MVP scope
+## D-01 MVP scope (superseded by D-16 for region and languages)
 
 **Decision:** Flanders only, Dutch UI. Primary user: private landlord with 1 to 5 homes, plus the tenant.
 
@@ -25,7 +25,7 @@ Format: decision, why, consequences. Open questions at the bottom, each with a p
 - All UI strings in `messages/nl.json`. Code, comments, docs and commit messages in English.
 - Brussels, Wallonia, French UI, agencies and student housing are post-MVP.
 
-## D-02 Roles and accounts
+## D-02 Roles and accounts (superseded by D-13 for the tenant)
 
 **Decision:** Both landlord and tenant have an account and sign in. The landlord creates the home and the inventory and invites the tenant by email.
 
@@ -119,17 +119,67 @@ Format: decision, why, consequences. Open questions at the bottom, each with a p
 - Retention period and deletion rules are open (O-02). Until decided, nothing is deleted automatically.
 - Data processing terms with Anthropic, Supabase, Vercel and Resend are checked before the pilot.
 
+## D-13 Landlord captures, tenant reviews by email link (Sam, 7 Nov 2026)
+
+**Decision:** The landlord has an account and does the capture. The tenant has no account or password: an email link plus a one-time code opens the review, and a new code is asked again at signing.
+
+**Consequences:**
+- The tenant is identified by email address and code; the code check is a ledger event.
+- Supersedes the tenant part of D-02. The landlord part of D-02 stands.
+
+## D-14 72-hour review window (Sam, 7 Nov 2026)
+
+**Decision:** The landlord shares the finished report with the tenant for a 72-hour review. Without a reaction, the tenant gets an automatic reminder and 72 more hours. After that, the landlord may sign alone; the PDF then states "not reviewed by the tenant".
+
+## D-15 Comments block signing until resolved (Sam, 7 Nov 2026)
+
+**Decision:** During review the tenant adds comments to items or rooms, with text and optionally live camera photos. The landlord accepts or rejects each comment. An open or rejected comment blocks signing for both. The app does not break a deadlock: the parties resolve it themselves, or the app suggests calling in an expert.
+
+**Consequences:**
+- An accepted comment changes the item (or adds one) and is shown in the PDF as agreed.
+- A rejected comment can be withdrawn by the tenant or reopened by the landlord; while it stands, nobody signs.
+- Known risk: an inventory can stay unsigned. D-14's "sign alone" applies only when the tenant did not react at all, never over a rejected comment.
+
+## D-16 Three languages, all of Belgium (Sam, 7 Nov 2026)
+
+**Decision:** App, AI descriptions, emails and PDF in Dutch, French and English. Scope is all of Belgium: Flanders, Brussels and Wallonia.
+
+**Consequences:**
+- Supersedes D-01 for region and languages. UI strings in `messages/{nl,fr,en}.json`.
+- Each person picks their language; the report language is chosen per inventory, with each party able to view it in their own language.
+- The region of the address decides the legal template and clauses (three regional rental laws). O-01 now covers all three regions.
+
+## D-17 Close-up loop with manual override (Sam, 7 Nov 2026)
+
+**Decision:** Per room the AI keeps asking close-ups until no item is uncertain. When a close-up is impossible, the landlord fills in the condition manually; the report marks it "filled in by the landlord, no close-up".
+
+## D-18 Voice notes (Sam, 7 Nov 2026)
+
+**Decision:** Notes can be dictated. The audio is transcribed, then deleted; only the text is kept, as a user-written note (erasable, hash in the ledger).
+
+## D-19 Payment before signing (Sam, 7 Nov 2026)
+
+**Decision:** Capture, AI, report and review are free. The landlord pays €15 per report (incl. VAT) before signing. Resolves O-06.
+
+## D-20 Personal data is managed, minimally (Sam, 7 Nov 2026)
+
+**Decision:** The product processes personal data by nature (names, emails, address, signatures, photos of a home, notes). We store it, but only what the report needs: no phone number, national register number or date of birth. Personal data sits in separate tables, never in ledger payloads, in the EU, and is erasable without breaking the proof.
+
+## D-21 Report by email (Sam, 7 Nov 2026)
+
+**Decision:** When the report is signed, the PDF is emailed to landlord and tenant. Both can download it again from the app or the email link.
+
 ---
 
 ## Open questions (proposed defaults, not binding)
 
 | Id | Question | Proposed default |
 |---|---|---|
-| O-01 | Which format and fields does a Flemish inventory need to be registrable, and what may we claim about validity? | Check with a lawyer or rental expert before the pilot; PDF follows the common Flemish model until then |
+| O-01 | Which format and fields does an inventory need to be registrable in Flanders, Brussels and Wallonia, and what may we claim about validity? | Check with a lawyer or rental expert before the pilot; PDF follows the common Flemish model until then |
 | O-02 | How long do we keep photos and inventories after the lease ends? | Until the deposit is settled plus the legal limitation period; landlord can export and delete |
 | O-03 | Which condition scale? | Nieuw, Goed, Gebruikt, Beschadigd, Defect, plus "niet te beoordelen" |
-| O-04 | Can the tenant add items, photos and close-ups, or only remarks? | Tenant can add remarks and close-ups (camera only), not delete or edit landlord items |
+| O-04 | Can the tenant add items, photos and close-ups, or only remarks? | Resolved by D-15 |
 | O-05 | Payment provider? | Mollie (Belgian payment methods, Bancontact) |
-| O-06 | When does the landlord pay? | Before the PDF can be signed; the AI room list is free to try |
+| O-06 | When does the landlord pay? | Resolved by D-19 |
 | O-07 | What if the parties disagree on an item? | Each keeps a remark on the item; both can still sign with remarks |
 | O-08 | Final name and company (own or under WFSR's company)? | Plaatsbeschrijving.be as working name |
