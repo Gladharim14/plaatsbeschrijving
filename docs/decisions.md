@@ -180,6 +180,14 @@ Format: decision, why, consequences. Open questions at the bottom, each with a p
 - When agreement fails (a rejected comment that stands, or no reaction from the tenant), the landlord or the tenant can download a "not agreed" file: the latest version, every comment with both positions, all photos with times, clearly marked as unsigned and not an inventory. It is meant for the legal route (expert appointed through the justice of the peace, to confirm in O-01).
 - No "signed by landlord only" state, flag or PDF text anywhere.
 
+## D-23 MVP is move-in only (Sam, 7 Nov 2026)
+
+**Decision:** The MVP covers the move-in inventory only. Move-out with the per-item comparison is a later phase.
+
+**Consequences:**
+- The data model keeps room for it (inventory kind, link from a move-out to its move-in, item links), so nothing has to be rebuilt later; no move-out screens, AI comparison or tests in the MVP.
+- Pricing, review and signing rules are written for move-in; move-out gets its own decisions when that phase starts.
+
 ---
 
 ## Open questions (proposed defaults, not binding)

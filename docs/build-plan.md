@@ -38,7 +38,7 @@ References: D and O ids in `docs/decisions.md`. A task that needs an open questi
 - [ ] S3-04 PDF export in the Flemish format (waits for O-01), with photos, capture times, signatures and how to check the hash
 - [ ] S3-05 Correction after signing: new version, both sign again
 
-## S4 Move-out
+## Later: Move-out (D-23, not in the MVP)
 
 - [ ] S4-01 Start a move-out inventory from the signed move-in version
 - [ ] S4-02 Guided capture matching the move-in shots per room
