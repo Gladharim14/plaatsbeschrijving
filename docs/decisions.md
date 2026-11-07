@@ -181,5 +181,5 @@ Format: decision, why, consequences. Open questions at the bottom, each with a p
 | O-04 | Can the tenant add items, photos and close-ups, or only remarks? | Resolved by D-15 |
 | O-05 | Payment provider? | Mollie (Belgian payment methods, Bancontact) |
 | O-06 | When does the landlord pay? | Resolved by D-19 |
-| O-07 | What if the parties disagree on an item? | Each keeps a remark on the item; both can still sign with remarks |
+| O-07 | What if the parties disagree on an item? | Resolved by D-15: blocks signing |
 | O-08 | Final name and company (own or under WFSR's company)? | Plaatsbeschrijving.be as working name |
